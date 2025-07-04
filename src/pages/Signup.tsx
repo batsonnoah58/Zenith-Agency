@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 const steps = [
   'Name',
   'Details',
-  'Payment',
+  'Password',
 ];
 
 const Signup = () => {
@@ -22,7 +22,6 @@ const Signup = () => {
   const [referral, setReferral] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [paymentComplete, setPaymentComplete] = useState(false);
   const { signup, loading, error, user } = useAuthStore();
   const navigate = useNavigate();
   const [formError, setFormError] = useState<string | null>(null);
@@ -59,10 +58,6 @@ const Signup = () => {
       setFormError(null);
       setStep(3);
     } else if (step === 3) {
-      if (!paymentComplete) {
-        setFormError('Please pay the activation fee to proceed.');
-        return;
-      }
       setFormError(null);
       handleSubmit(e);
     }
@@ -84,6 +79,12 @@ const Signup = () => {
     }
   };
 
+  React.useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] py-12">
       {/* Progress Bar */}
@@ -99,7 +100,7 @@ const Signup = () => {
             <span className="text-white font-bold text-2xl">Z</span>
           </div>
           <h2 className="text-2xl font-bold text-blue-900">Join Zenith Agency</h2>
-          <p className="text-blue-700 mt-1 text-sm">Start earning with just KSh 100 activation fee</p>
+          <p className="text-blue-700 mt-1 text-sm">Sign up for free and start earning today!</p>
         </div>
         {/* Step Indicator */}
         <div className="flex items-center justify-center gap-4 mb-4">
@@ -259,25 +260,12 @@ const Signup = () => {
             </motion.div>
           )}
           {step === 3 && (
-            <motion.div key="step3" variants={stepVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col items-center space-y-6">
-              <div className="text-center">
-                <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <span className="text-blue-900 font-bold text-2xl">KSh</span>
-                </div>
-                <h3 className="text-2xl font-bold text-blue-900 mb-2">Pay KSh 100 Activation Fee</h3>
-                <p className="text-gray-700 mb-4">A one-time activation fee is required to join Zenith Agency and start earning.</p>
+            <motion.div key="step3" variants={stepVariants} initial="initial" animate="animate" exit="exit" className="space-y-4">
+              {/* Password Step (already handled in step 2, so just show a summary or success message if needed) */}
+              <div className="flex flex-col items-center">
+                <h3 className="text-lg font-bold text-blue-700 mb-2">You're almost done!</h3>
+                <p className="text-gray-700 mb-4 text-center">Click below to complete your registration and start earning.</p>
               </div>
-              {!paymentComplete ? (
-                <button
-                  type="button"
-                  className="w-full bg-green-600 text-white py-2 rounded font-semibold hover:bg-green-700 transition-colors shadow"
-                  onClick={() => setPaymentComplete(true)}
-                >
-                  Simulate Payment (KSh 100)
-                </button>
-              ) : (
-                <div className="w-full bg-green-100 text-green-800 py-2 rounded font-semibold text-center shadow">Payment Successful!</div>
-              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -294,6 +282,8 @@ const Signup = () => {
         <div className="text-center text-sm">
           Already have an account? <a href="/login" className="text-blue-600 hover:underline">Sign in</a>
         </div>
+        {/* Add a note that signup is free */}
+        <div className="text-center text-green-600 font-semibold text-sm mb-2">Sign up is 100% free!</div>
       </form>
       {/* Success Toast/Modal */}
       {showSuccess && (
@@ -301,10 +291,10 @@ const Signup = () => {
           <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-gray-100">
             <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-      </div>
+            </div>
             <h3 className="text-2xl font-bold text-green-700 mb-2">Signup Successful!</h3>
             <p className="text-gray-700 mb-4">Welcome to Zenith Agency. Redirecting to your dashboard...</p>
-      </div>
+          </div>
         </motion.div>
       )}
     </div>

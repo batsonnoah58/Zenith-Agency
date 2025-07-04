@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, type FormEvent } from 'react';
+import { useState, type FormEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/auth';
 
@@ -10,6 +10,12 @@ const Login = () => {
   const [formError, setFormError] = useState<string | null>(null);
   const { login, loading, error, user } = useAuthStore();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

@@ -10,6 +10,9 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Contact from "./pages/Contact";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 
 function App() {
   return (
@@ -25,7 +28,10 @@ function App() {
         <Route path="/tasks" element={<ProtectedRoute><Layout><TaskArea /></Layout></ProtectedRoute>} />
         <Route path="/profit" element={<ProtectedRoute><Layout><Profit /></Layout></ProtectedRoute>} />
         <Route path="/account" element={<ProtectedRoute><Layout><Account /></Layout></ProtectedRoute>} />
-        <Route path="/support" element={<ProtectedRoute><Layout><Support /></Layout></ProtectedRoute>} />
+        <Route path="/support" element={<Layout><Support /></Layout>} />
+        <Route path="/privacy" element={<Layout><PrivacyPolicy /></Layout>} />
+        <Route path="/terms" element={<Layout><TermsOfService /></Layout>} />
+        <Route path="/contact" element={<Layout><Contact /></Layout>} />
 
         {/* IMPORTANT: DO NOT place any routes below this. */}
         <Route path="*" element={<NotFound />} />

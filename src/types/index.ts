@@ -1,9 +1,14 @@
 export interface User {
+  id: string;
   name: string;
   email: string;
   phone: string;
   referral?: string;
   stats: UserStats;
+  level: number;
+  investment: number;
+  tasksCompletedToday: number;
+  lastTaskCompletionDate: string;
 }
 
 export interface UserStats {
@@ -27,3 +32,11 @@ export interface Referral {
   code: string;
   referredBy?: string;
 } 
+
+// Level configuration type
+type LevelConfig = {
+  level: number;
+  investment: number;
+  tasksPerDay: number;
+  payPerTask: number;
+}; 

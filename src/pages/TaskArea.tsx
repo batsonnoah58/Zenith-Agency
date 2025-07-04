@@ -2,9 +2,10 @@ import * as React from 'react';
 import toast from 'react-hot-toast';
 
 const initialTasks = [
-  { id: 1, title: 'Share your referral link', description: 'Invite a friend using your referral link.', reward: 50, completed: false, details: 'Share your unique referral link with friends. You earn KSh 50 for each friend who signs up.' },
+  { id: 1, title: 'Share your referral link', description: 'Invite a friend using your referral link.', reward: 100, completed: false, details: 'Share your unique referral link with friends. You earn KSh 100 for each friend who signs up.' },
   { id: 2, title: 'Complete profile', description: 'Fill out your account profile information.', reward: 30, completed: true, details: 'Go to your account page and complete all required profile fields.' },
   { id: 3, title: 'Join Telegram group', description: 'Join our official Telegram group for updates.', reward: 20, completed: false, details: 'Click the link to join our Telegram group and stay updated with the latest news.' },
+  { id: 4, title: 'Join Whatsapp group', description: 'Join our official Whatsapp group for updates.', reward: 30, complleted: false, details: 'Click the link to join our Whatsapp group and stay updated with the latest news.' },
 ];
 
 const TaskArea = () => {
