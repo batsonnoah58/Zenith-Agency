@@ -27,9 +27,9 @@ export const useAuthStore = create<AuthState>((set: (partial: Partial<AuthState>
   login: async (phone: string, password: string) => {
     set({ loading: true, error: null });
     const demoUsers = [
-      { id: '1', name: 'Demo User', phone: '+254700000001', password: 'demo123' },
-      { id: '2', name: 'Admin User', phone: '+254700000002', password: 'admin123' },
-      { id: '3', name: 'Test User', phone: '+254700000003', password: 'test123' },
+      { id: '1', name: 'Demo User', phone: '+254700000000', password: 'demo123' },
+      { id: '2', name: 'Admin User', phone: '+254700000001', password: 'admin123' },
+      { id: '3', name: 'Test User', phone: '+254700000002', password: 'test123' },
     ];
     try {
       await new Promise((res) => setTimeout(res, 800));
@@ -49,9 +49,9 @@ export const useAuthStore = create<AuthState>((set: (partial: Partial<AuthState>
   signup: async (name: string, phone: string, password: string) => {
     set({ loading: true, error: null });
     const demoUsers = [
-      { id: '1', name: 'Demo User', phone: '+254700000001', password: 'demo123' },
-      { id: '2', name: 'Admin User', phone: '+254700000002', password: 'admin123' },
-      { id: '3', name: 'Test User', phone: '+254700000003', password: 'test123' },
+      { id: '1', name: 'Demo User', phone: '+254700000000', password: 'demo123' },
+      { id: '2', name: 'Admin User', phone: '+254700000001', password: 'admin123' },
+      { id: '3', name: 'Test User', phone: '+254700000002', password: 'test123' },
     ];
     try {
       await new Promise((res) => setTimeout(res, 800));
@@ -80,9 +80,9 @@ export const useAuthStore = create<AuthState>((set: (partial: Partial<AuthState>
   fetchUser: async () => {
     set({ loading: true, error: null });
     const demoUsers = [
-      { id: '1', name: 'Demo User', phone: '+254700000001', password: 'demo123' },
-      { id: '2', name: 'Admin User', phone: '+254700000002', password: 'admin123' },
-      { id: '3', name: 'Test User', phone: '+254700000003', password: 'test123' },
+      { id: '1', name: 'Demo User', phone: '+254700000000', password: 'demo123' },
+      { id: '2', name: 'Admin User', phone: '+254700000001', password: 'admin123' },
+      { id: '3', name: 'Test User', phone: '+254700000002', password: 'test123' },
     ];
     try {
       await new Promise((res) => setTimeout(res, 500));
