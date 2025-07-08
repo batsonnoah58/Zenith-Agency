@@ -1,10 +1,9 @@
 import { create } from 'zustand';
-import axios from 'axios';
 
 interface User {
   id: string;
   name: string;
-  email: string;
+  phone: string;
 }
 
 interface AuthState {
@@ -12,8 +11,8 @@ interface AuthState {
   token: string | null;
   loading: boolean;
   error: string | null;
-  login: (email: string, password: string) => Promise<void>;
-  signup: (name: string, email: string, password: string) => Promise<void>;
+  login: (phone: string, password: string) => Promise<void>;
+  signup: (name: string, phone: string, password: string) => Promise<void>;
   logout: () => void;
   fetchUser: () => Promise<void>;
 }
@@ -24,21 +23,21 @@ export const useAuthStore = create<AuthState>((set: (partial: Partial<AuthState>
   loading: false,
   error: null,
 
-  // Hardcoded demo users
-  login: async (email: string, password: string) => {
+  // Hardcoded demo users (now using phone numbers)
+  login: async (phone: string, password: string) => {
     set({ loading: true, error: null });
     const demoUsers = [
-      { id: '1', name: 'Demo User', email: 'demo@zenith.com', password: 'demo123' },
-      { id: '2', name: 'Admin User', email: 'admin@zenith.com', password: 'admin123' },
-      { id: '3', name: 'Test User', email: 'test@zenith.com', password: 'test123' },
+      { id: '1', name: 'Demo User', phone: '+254700000001', password: 'demo123' },
+      { id: '2', name: 'Admin User', phone: '+254700000002', password: 'admin123' },
+      { id: '3', name: 'Test User', phone: '+254700000003', password: 'test123' },
     ];
     try {
       await new Promise((res) => setTimeout(res, 800));
-      const found = demoUsers.find(u => u.email === email && u.password === password);
+      const found = demoUsers.find(u => u.phone === phone && u.password === password);
       if (found) {
-        const token = `mock-jwt-token-${found.email}`;
+        const token = `mock-jwt-token-${found.phone}`;
         localStorage.setItem('token', token);
-        set({ token, user: { id: found.id, name: found.name, email: found.email }, loading: false });
+        set({ token, user: { id: found.id, name: found.name, phone: found.phone }, loading: false });
       } else {
         throw new Error('Invalid credentials');
       }
@@ -47,21 +46,21 @@ export const useAuthStore = create<AuthState>((set: (partial: Partial<AuthState>
     }
   },
 
-  signup: async (name: string, email: string, password: string) => {
+  signup: async (name: string, phone: string, password: string) => {
     set({ loading: true, error: null });
     const demoUsers = [
-      { id: '1', name: 'Demo User', email: 'demo@zenith.com', password: 'demo123' },
-      { id: '2', name: 'Admin User', email: 'admin@zenith.com', password: 'admin123' },
-      { id: '3', name: 'Test User', email: 'test@zenith.com', password: 'test123' },
+      { id: '1', name: 'Demo User', phone: '+254700000001', password: 'demo123' },
+      { id: '2', name: 'Admin User', phone: '+254700000002', password: 'admin123' },
+      { id: '3', name: 'Test User', phone: '+254700000003', password: 'test123' },
     ];
     try {
       await new Promise((res) => setTimeout(res, 800));
-      const found = demoUsers.find(u => u.email === email);
+      const found = demoUsers.find(u => u.phone === phone);
       if (found) {
         if (password === found.password && name === found.name) {
-          const token = `mock-jwt-token-${found.email}`;
+          const token = `mock-jwt-token-${found.phone}`;
           localStorage.setItem('token', token);
-          set({ token, user: { id: found.id, name: found.name, email: found.email }, loading: false });
+          set({ token, user: { id: found.id, name: found.name, phone: found.phone }, loading: false });
         } else {
           throw new Error('To demo signup, use the correct name and password for this demo user.');
         }
@@ -81,18 +80,18 @@ export const useAuthStore = create<AuthState>((set: (partial: Partial<AuthState>
   fetchUser: async () => {
     set({ loading: true, error: null });
     const demoUsers = [
-      { id: '1', name: 'Demo User', email: 'demo@zenith.com', password: 'demo123' },
-      { id: '2', name: 'Admin User', email: 'admin@zenith.com', password: 'admin123' },
-      { id: '3', name: 'Test User', email: 'test@zenith.com', password: 'test123' },
+      { id: '1', name: 'Demo User', phone: '+254700000001', password: 'demo123' },
+      { id: '2', name: 'Admin User', phone: '+254700000002', password: 'admin123' },
+      { id: '3', name: 'Test User', phone: '+254700000003', password: 'test123' },
     ];
     try {
       await new Promise((res) => setTimeout(res, 500));
       const token = localStorage.getItem('token');
       if (token) {
-        const email = token.replace('mock-jwt-token-', '');
-        const found = demoUsers.find(u => u.email === email);
+        const phone = token.replace('mock-jwt-token-', '');
+        const found = demoUsers.find(u => u.phone === phone);
         if (found) {
-          set({ user: { id: found.id, name: found.name, email: found.email }, loading: false });
+          set({ user: { id: found.id, name: found.name, phone: found.phone }, loading: false });
         } else {
           set({ user: null, loading: false });
         }
