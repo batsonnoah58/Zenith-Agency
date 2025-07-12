@@ -1,129 +1,95 @@
 import * as React from 'react';
 import { useUserStore } from '../store/user';
-import { LEVELS } from '../utils/levels';
-import toast from 'react-hot-toast';
-import { useEffect, useState } from 'react';
-import { useAuthStore } from '../store/auth';
-import { useNavigate } from 'react-router-dom';
-import { FaSignOutAlt } from 'react-icons/fa';
+import ProfileIconGrid from '../components/ProfileIconGrid';
+import { FaMedal, FaFire, FaTrophy } from 'react-icons/fa';
+import { LEVELS as LEVELS_DATA } from '../data/levels';
+import { getManagementFees } from '../utils/managementFee';
+import EarningLevelsTable from '../components/EarningLevelsTable';
+import Card from '../components/Card';
+import Button from '../components/Button';
+import Tooltip from '../components/Tooltip';
+import { FaInfoCircle } from 'react-icons/fa';
+
+const mockBadges = [
+  { icon: <FaMedal className="text-yellow-400" />, label: 'First Task' },
+  { icon: <FaMedal className="text-blue-400" />, label: 'First Referral' },
+  { icon: <FaTrophy className="text-green-500" />, label: 'Level Up' },
+];
 
 const Account = () => {
   const profile = useUserStore((s) => s.profile);
-  const currentLevelConfig = useUserStore((s) => s.currentLevelConfig());
-  const tasksRemaining = useUserStore((s) => s.tasksRemaining());
-  const upgradeLevel = useUserStore((s) => s.upgradeLevel);
-
-  const [editMode, setEditMode] = React.useState(false);
-  const [profileForm, setProfileForm] = React.useState({ name: profile?.name || '', email: profile?.email || '' });
-  const [passwords, setPasswords] = React.useState({ current: '', new: '', confirm: '' });
-  const [pwSuccess, setPwSuccess] = React.useState(false);
-
-  const logout = useAuthStore((state) => state.logout);
-  const navigate = useNavigate();
-
-  // Use real data from store
-  const accountCreated = profile?.createdAt ? profile.createdAt.slice(0,10) : 'N/A';
-  const lastLogin = profile?.lastLogin ? profile.lastLogin.slice(0,10) : 'N/A';
-  const passwordLastChanged = profile?.passwordLastChanged ? profile.passwordLastChanged.slice(0,10) : 'N/A';
-  const referrals = profile?.referralCount || 0;
-  const referralEarnings = profile?.stats?.referrals || 0;
-  const profileFields = [profile?.name, profile?.email, profile?.phone];
-  const profileComplete = Math.round((profileFields.filter(Boolean).length / profileFields.length) * 100);
-  const handleDownload = () => {
-    // Mock download
-    alert('Account data download (mock)');
-  };
-
-  const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setProfileForm({ ...profileForm, [e.target.name]: e.target.value });
-  };
-
-  const handleProfileSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    setEditMode(false);
-    toast.success('Profile updated (mock)!');
-  };
-
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPasswords({ ...passwords, [e.target.name]: e.target.value });
-  };
-
-  const handlePasswordSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (passwords.new !== passwords.confirm) {
-      toast.error('New passwords do not match');
-      return;
-    }
-    setPwSuccess(true);
-    setTimeout(() => setPwSuccess(false), 2000);
-    setPasswords({ current: '', new: '', confirm: '' });
-    toast.success('Password changed (mock)!');
-  };
-
-  if (!profile || !currentLevelConfig) return null;
+  const [streak] = React.useState(5); // mock streak
+  const [showLevelsModal, setShowLevelsModal] = React.useState(false);
+  const currentLevelData = profile ? LEVELS_DATA.find(l => l.level === `J${profile.level}`) : undefined;
+  const managementFees = currentLevelData ? getManagementFees(currentLevelData.level) : null;
+  if (!profile) return null;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] py-12">
-      <div className="bg-white rounded-2xl shadow-2xl p-10 max-w-lg w-full border border-gray-100">
-        <h1 className="text-3xl font-bold mb-6 text-blue-900">My Account</h1>
-        {/* Level/Investment Info */}
-        <div className="mb-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <div className="mb-2 font-semibold text-blue-900">Level {profile.level} (Investment: KSh {profile.investment.toLocaleString()})</div>
-          <div className="mb-2">Pay per Task: <span className="font-bold">KSh {currentLevelConfig.payPerTask}</span></div>
-          <div className="mb-2">Tasks per Day: <span className="font-bold">{currentLevelConfig.tasksPerDay}</span></div>
-          <div className="mb-2">Tasks Remaining Today: <span className="font-bold">{tasksRemaining}</span></div>
-          <div className="mb-2">Referrals: <span className="font-bold">{referrals}</span> (Earnings: KSh {referralEarnings})</div>
-          <div className="mb-2">Account Created: <span className="font-bold">{accountCreated}</span></div>
-          <div className="mb-2">Last Login: <span className="font-bold">{lastLogin}</span></div>
-          <div className="mb-2">Password Last Changed: <span className="font-bold">{passwordLastChanged}</span></div>
-          <div className="mb-2">Profile Completeness:</div>
-          <div className="w-full h-3 bg-blue-100 rounded-full overflow-hidden mb-2">
-            <div className="h-3 bg-gradient-to-r from-blue-400 to-green-400 rounded-full" style={{ width: `${profileComplete}%` }}></div>
-          </div>
-          <div className="text-sm text-gray-700 mb-2">{profileComplete}% complete</div>
-          <button onClick={handleDownload} className="bg-blue-600 text-white px-4 py-2 rounded font-semibold hover:bg-blue-700 transition-colors shadow text-sm">Download Account Data</button>
+    <div className="flex flex-col items-center justify-center min-h-[80vh] py-8 w-full bg-gradient-to-br from-blue-50 to-purple-50">
+      <Card className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full border border-gray-100 flex flex-col items-center">
+        {/* Avatar */}
+        <div className="w-20 h-20 rounded-full bg-blue-200 flex items-center justify-center text-4xl font-bold text-blue-800 mb-4">
+          {profile.name ? profile.name[0].toUpperCase() : '?'}
         </div>
-        {/* Profile Form */}
-        <form onSubmit={handleProfileSave} className="mb-8 space-y-4">
-          <div>
-            <label className="block font-medium mb-1">Name</label>
-            <input name="name" value={profileForm.name} onChange={handleProfileChange} required className="w-full border px-3 py-2 rounded" />
-          </div>
-          <div>
-            <label className="block font-medium mb-1">Email</label>
-            <input name="email" type="email" value={profileForm.email} onChange={handleProfileChange} required className="w-full border px-3 py-2 rounded" />
-          </div>
-          <button type="submit" className="w-full bg-yellow-400 text-blue-900 py-2 rounded font-semibold hover:bg-yellow-300 transition-colors shadow">
-            Save Changes
-          </button>
-        </form>
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-2 text-blue-900">Change Password</h2>
-          <form onSubmit={handlePasswordSubmit} className="space-y-4">
-            <div>
-              <label className="block font-medium mb-1">Current Password</label>
-              <input name="current" type="password" value={passwords.current} onChange={handlePasswordChange} required className="w-full border px-3 py-2 rounded" />
-            </div>
-            <div>
-              <label className="block font-medium mb-1">New Password</label>
-              <input name="new" type="password" value={passwords.new} onChange={handlePasswordChange} required className="w-full border px-3 py-2 rounded" />
-            </div>
-            <div>
-              <label className="block font-medium mb-1">Confirm New Password</label>
-              <input name="confirm" type="password" value={passwords.confirm} onChange={handlePasswordChange} required className="w-full border px-3 py-2 rounded" />
-            </div>
-            <button type="submit" className="w-full bg-yellow-400 text-blue-900 py-2 rounded font-semibold hover:bg-yellow-300 transition-colors shadow">
-              Change Password
-            </button>
-          </form>
+        {/* Name and Phone */}
+        <div className="text-2xl font-bold text-blue-900 mb-1">{profile.name}</div>
+        <div className="text-gray-600 mb-2">{profile.phone}</div>
+        {/* Level */}
+        <div className="mb-4 text-sm text-blue-700 font-semibold bg-blue-100 px-3 py-1 rounded-full">Level J{profile.level}</div>
+        {/* Daily Wage & Management Fee */}
+        <div className="w-full mb-4">
+          <Card className="bg-green-50 border border-green-200 rounded-lg p-4 flex flex-col items-center">
+            <h2 className="text-lg font-semibold mb-2 text-green-900">Your Daily Wage & Management Fee</h2>
+            <ul className="text-gray-700 space-y-1 mb-3">
+              <li>Daily Wage: <span className="font-bold text-green-700">KSh {currentLevelData?.dailyWages?.toLocaleString() || '--'}</span></li>
+              <li>Management Fee <Tooltip text="A bonus you earn daily from your direct subordinates' activity."><FaInfoCircle className="inline ml-1 text-blue-400" /></Tooltip> (Level A <Tooltip text="Direct subordinates you recruited."><FaInfoCircle className="inline ml-1 text-blue-400" /></Tooltip>): <span className="font-bold">KSh {managementFees?.A ?? '--'}</span></li>
+              <li>Level B <Tooltip text="Indirect subordinates (your subordinates' recruits)."><FaInfoCircle className="inline ml-1 text-blue-400" /></Tooltip> Fee: <span className="font-bold">KSh {managementFees?.B ?? '--'}</span></li>
+              <li>Level C <Tooltip text="Third-level subordinates (recruited by your Level B team)."><FaInfoCircle className="inline ml-1 text-blue-400" /></Tooltip> Fee: <span className="font-bold">KSh {managementFees?.C ?? '--'}</span></li>
+            </ul>
+            <Button
+              className="bg-blue-600 text-white px-4 py-1 rounded font-semibold hover:bg-blue-700 transition-colors shadow text-sm"
+              onClick={() => setShowLevelsModal(true)}
+            >
+              See All Levels
+            </Button>
+          </Card>
         </div>
-        <button
-          className="w-full bg-red-500 text-white py-2 rounded font-semibold hover:bg-red-600 transition-colors shadow flex items-center justify-center gap-2 mt-2"
-          onClick={() => { logout(); navigate('/'); }}
-        >
-          <FaSignOutAlt /> Logout
-        </button>
-      </div>
+        {/* Modal for Earning Levels Table */}
+        {showLevelsModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <Card className="bg-white rounded-lg shadow-lg p-6 max-w-2xl w-full relative">
+              <button
+                className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-2xl font-bold"
+                onClick={() => setShowLevelsModal(false)}
+              >
+                &times;
+              </button>
+              <h2 className="text-2xl font-bold mb-4 text-blue-900">Earning Levels Table</h2>
+              <div className="overflow-x-auto">
+                <EarningLevelsTable />
+              </div>
+            </Card>
+          </div>
+        )}
+        {/* Icon Navigation */}
+        <ProfileIconGrid />
+        {/* Gamification Section */}
+        <div className="w-full mt-6">
+          <Card className="bg-white rounded-lg shadow p-4 flex flex-col items-center">
+            <div className="font-semibold mb-2 flex items-center gap-2"><FaMedal className="text-yellow-400" /> Badges</div>
+            <div className="flex gap-3 mb-2">
+              {mockBadges.map((b, i) => (
+                <div key={i} className="flex flex-col items-center">
+                  <div className="text-3xl">{b.icon}</div>
+                  <span className="text-xs mt-1">{b.label}</span>
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center gap-2 text-orange-600 font-semibold mb-2"><FaFire /> Streak: {streak} days</div>
+            <a href="/leaderboard" className="text-blue-600 hover:underline text-xs flex items-center gap-1"><FaTrophy /> View Leaderboard</a>
+          </Card>
+        </div>
+      </Card>
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { useUserStore } from './user';
 
 interface User {
   id: string;
@@ -38,6 +39,23 @@ export const useAuthStore = create<AuthState>((set: (partial: Partial<AuthState>
         const token = `mock-jwt-token-${found.phone}`;
         localStorage.setItem('token', token);
         set({ token, user: { id: found.id, name: found.name, phone: found.phone }, loading: false });
+        // Set user profile for Account page
+        useUserStore.getState().setProfile({
+          name: found.name,
+          email: found.phone + '@demo.com',
+          phone: found.phone,
+          stats: { earnings: 0, referrals: 0, tasksCompleted: 0 },
+          level: 1,
+          investment: 0,
+          tasksCompletedToday: 0,
+          lastTaskCompletionDate: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
+          lastLogin: new Date().toISOString(),
+          passwordLastChanged: new Date().toISOString(),
+          earningsHistory: [],
+          paymentHistory: [],
+          referralCount: 0,
+        });
       } else {
         throw new Error('Invalid credentials');
       }
@@ -61,6 +79,23 @@ export const useAuthStore = create<AuthState>((set: (partial: Partial<AuthState>
           const token = `mock-jwt-token-${found.phone}`;
           localStorage.setItem('token', token);
           set({ token, user: { id: found.id, name: found.name, phone: found.phone }, loading: false });
+          // Set user profile for Account page
+          useUserStore.getState().setProfile({
+            name: found.name,
+            email: found.phone + '@demo.com',
+            phone: found.phone,
+            stats: { earnings: 0, referrals: 0, tasksCompleted: 0 },
+            level: 1,
+            investment: 0,
+            tasksCompletedToday: 0,
+            lastTaskCompletionDate: new Date().toISOString(),
+            createdAt: new Date().toISOString(),
+            lastLogin: new Date().toISOString(),
+            passwordLastChanged: new Date().toISOString(),
+            earningsHistory: [],
+            paymentHistory: [],
+            referralCount: 0,
+          });
         } else {
           throw new Error('To demo signup, use the correct name and password for this demo user.');
         }
@@ -75,6 +110,7 @@ export const useAuthStore = create<AuthState>((set: (partial: Partial<AuthState>
   logout: () => {
     localStorage.removeItem('token');
     set({ user: null, token: null });
+    useUserStore.getState().setProfile(null);
   },
 
   fetchUser: async () => {
@@ -92,14 +128,34 @@ export const useAuthStore = create<AuthState>((set: (partial: Partial<AuthState>
         const found = demoUsers.find(u => u.phone === phone);
         if (found) {
           set({ user: { id: found.id, name: found.name, phone: found.phone }, loading: false });
+          // Set user profile for Account page
+          useUserStore.getState().setProfile({
+            name: found.name,
+            email: found.phone + '@demo.com',
+            phone: found.phone,
+            stats: { earnings: 0, referrals: 0, tasksCompleted: 0 },
+            level: 1,
+            investment: 0,
+            tasksCompletedToday: 0,
+            lastTaskCompletionDate: new Date().toISOString(),
+            createdAt: new Date().toISOString(),
+            lastLogin: new Date().toISOString(),
+            passwordLastChanged: new Date().toISOString(),
+            earningsHistory: [],
+            paymentHistory: [],
+            referralCount: 0,
+          });
         } else {
           set({ user: null, loading: false });
+          useUserStore.getState().setProfile(null);
         }
       } else {
         set({ user: null, loading: false });
+        useUserStore.getState().setProfile(null);
       }
     } catch (err: any) {
       set({ error: err.message, loading: false });
+      useUserStore.getState().setProfile(null);
     }
   },
 })); 

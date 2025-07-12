@@ -1,7 +1,8 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuthStore } from "../store/auth";
-import { FaHome, FaTachometerAlt, FaTasks, FaMoneyBillWave, FaUser, FaLifeRing, FaSignOutAlt } from "react-icons/fa";
+import { FaHome, FaTachometerAlt, FaTasks, FaMoneyBillWave, FaUser, FaLifeRing, FaSignOutAlt, FaBars, FaTimes } from "react-icons/fa";
+import NotificationBell from "./NotificationBell";
 
 function Navbar() {
   const location = useLocation();
@@ -20,12 +21,18 @@ function Navbar() {
   ];
 
   const navIcons = {
-    Home: <FaHome size={22} />, // Home icon
-    Dashboard: <FaTachometerAlt size={22} />, // Dashboard icon
-    Tasks: <FaTasks size={22} />, // Tasks icon
-    Profit: <FaMoneyBillWave size={22} />, // Profit icon
-    Account: <FaUser size={22} />, // Account icon
-    Support: <FaLifeRing size={22} />, // Support icon
+    Home: <FaHome size={22} />,
+    Dashboard: <FaTachometerAlt size={22} />,
+    Tasks: <FaTasks size={22} />,
+    Profit: <FaMoneyBillWave size={22} />,
+    Account: <FaUser size={22} />,
+    Support: <FaLifeRing size={22} />,
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+    setIsMenuOpen(false);
   };
 
   return (
@@ -57,6 +64,9 @@ function Navbar() {
                   {item.name}
                 </Link>
               ))}
+              {user && (
+                <NotificationBell />
+              )}
               {!user ? (
                 <div className="flex items-center space-x-4">
                   <Link
@@ -76,7 +86,7 @@ function Navbar() {
                 <div className="flex items-center space-x-4">
                   <span className="text-white font-semibold">{user.name}</span>
                   <button
-                    onClick={logout}
+                    onClick={handleLogout}
                     className="bg-yellow-400 text-blue-900 px-4 py-2 rounded-md text-sm font-semibold hover:bg-yellow-300 transition-colors shadow"
                   >
                     Logout
@@ -86,35 +96,103 @@ function Navbar() {
             </div>
 
             {/* Mobile menu button */}
+            <div className="md:hidden flex items-center">
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="text-white p-2 rounded-md hover:bg-white/10 transition-colors"
+                aria-label="Toggle menu"
+              >
+                {isMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+              </button>
+            </div>
           </div>
         </div>
-      </nav>
-      {/* Mobile Bottom Navigation Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow md:hidden flex justify-around items-center h-16">
-        {navItems.filter(item => item.public || user).map((item) => (
-          <Link
-            key={item.name}
-            to={item.path}
-            className={`flex flex-col items-center justify-center flex-1 h-full text-xs font-medium transition-colors ${
-              location.pathname === item.path
-                ? "text-blue-600"
-                : "text-gray-500 hover:text-blue-600"
-            }`}
-          >
-            {navIcons[item.name as keyof typeof navIcons]}
-            <span className="mt-1">{item.name}</span>
-          </Link>
-        ))}
-        {user && (
-          <button
-            onClick={() => { logout(); navigate("/"); }}
-            className="flex flex-col items-center justify-center flex-1 h-full text-xs font-medium text-gray-500 hover:text-red-600 transition-colors"
-            style={{ background: "none", border: "none" }}
-          >
-            <FaSignOutAlt size={22} />
-            <span className="mt-1">Logout</span>
-          </button>
+
+        {/* Mobile menu */}
+        {isMenuOpen && (
+          <div className="md:hidden bg-white shadow-lg border-t border-gray-200">
+            <div className="px-2 pt-2 pb-3 space-y-1">
+              {navItems.filter(item => item.public || user).map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  className={`flex items-center px-3 py-3 rounded-md text-base font-medium transition-colors ${
+                    location.pathname === item.path
+                      ? "bg-blue-100 text-blue-900"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <span className="mr-3">{navIcons[item.name as keyof typeof navIcons]}</span>
+                  {item.name}
+                </Link>
+              ))}
+              {user && (
+                <div className="border-t border-gray-200 pt-2">
+                  <div className="px-3 py-2 text-sm text-gray-500">
+                    Logged in as: {user.name}
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center w-full px-3 py-3 text-base font-medium text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                  >
+                    <FaSignOutAlt className="mr-3" />
+                    Logout
+                  </button>
+                </div>
+              )}
+              {!user && (
+                <div className="border-t border-gray-200 pt-2 space-y-1">
+                  <Link
+                    to="/login"
+                    className="flex items-center px-3 py-3 text-base font-medium text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="flex items-center px-3 py-3 text-base font-medium bg-blue-600 text-white hover:bg-blue-700 rounded-md transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
         )}
+      </nav>
+
+      {/* Mobile Bottom Navigation Bar - Simplified for better UX */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow md:hidden">
+        <div className="flex justify-around items-center h-16">
+          {navItems.filter(item => item.public || user).slice(0, 4).map((item) => (
+            <Link
+              key={item.name}
+              to={item.path}
+              className={`flex flex-col items-center justify-center flex-1 h-full text-xs font-medium transition-colors min-h-[44px] ${
+                location.pathname === item.path
+                  ? "text-blue-600"
+                  : "text-gray-500 hover:text-blue-600"
+              }`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {navIcons[item.name as keyof typeof navIcons]}
+              <span className="mt-1">{item.name}</span>
+            </Link>
+          ))}
+          {user && (
+            <button
+              onClick={handleLogout}
+              className="flex flex-col items-center justify-center flex-1 h-full text-xs font-medium text-gray-500 hover:text-red-600 transition-colors min-h-[44px]"
+              style={{ background: "none", border: "none" }}
+            >
+              <FaSignOutAlt size={22} />
+              <span className="mt-1">Logout</span>
+            </button>
+          )}
+        </div>
       </div>
     </>
   );

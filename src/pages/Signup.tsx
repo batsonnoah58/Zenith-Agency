@@ -7,6 +7,13 @@ import toast from 'react-hot-toast';
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 
+const demoUsers = [
+  { phone: '+254700000000', password: 'demo123', label: 'Demo User' },
+  { phone: '+254700000001', password: 'admin123', label: 'Admin User' },
+  { phone: '+254700000002', password: 'test123', label: 'Test User' },
+];
+const demoInvitation = 'INVITE123';
+
 const steps = [
   'Name',
   'Details',
@@ -79,8 +86,28 @@ const Signup = () => {
     }
   }, [user, navigate]);
 
+  function isStrongPassword(pw: string) {
+    return pw.length >= 6 && /[A-Z]/.test(pw) && /[0-9]/.test(pw);
+  }
+  function getPasswordStrength(pw: string) {
+    if (pw.length < 6) return 'Too short';
+    if (!/[A-Z]/.test(pw)) return 'Add uppercase letter';
+    if (!/[0-9]/.test(pw)) return 'Add a number';
+    return 'Strong';
+  }
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] py-12">
+      {/* Demo Users Section */}
+      <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md w-full text-xs text-blue-900">
+        <div className="font-semibold mb-1">Demo Accounts for Testing:</div>
+        <ul className="list-disc ml-5">
+          {demoUsers.map(u => (
+            <li key={u.phone}><span className="font-mono">{u.phone}</span> / <span className="font-mono">{u.password}</span> <span className="text-gray-500">({u.label})</span></li>
+          ))}
+        </ul>
+        <div className="mt-2">Sample Invitation Code: <span className="font-mono bg-gray-100 px-2 py-0.5 rounded">{demoInvitation}</span></div>
+      </div>
       <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-2xl p-10 max-w-md w-full space-y-6 border border-gray-100 relative">
         {/* Logo and Title */}
         <div className="flex flex-col items-center mb-2">
@@ -98,7 +125,7 @@ const Signup = () => {
               placeholder="Enter phone number"
               value={phone}
               onChange={value => setPhone(value || '')}
-              defaultCountry="KE" // or your preferred default
+              defaultCountry="KE"
               international
               countryCallingCodeEditable={false}
               className="w-full border px-3 py-2 rounded focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
@@ -123,6 +150,10 @@ const Signup = () => {
                 )}
               </button>
             </div>
+            {/* Password Strength Meter */}
+            {password && (
+              <div className={`text-xs mt-1 ${getPasswordStrength(password) === 'Strong' ? 'text-green-600' : 'text-orange-500'}`}>Password strength: {getPasswordStrength(password)}</div>
+            )}
           </div>
           <div className="relative">
             <label className="block mb-1 font-medium" htmlFor="confirmPassword">Confirm Password</label>
@@ -223,13 +254,9 @@ const Signup = () => {
         </div>
         {/* Error Message */}
         {(formError || error) && <div className="text-red-500 text-center text-sm">{formError || error}</div>}
-        {/* Back Button */}
-        {steps.length > 1 && (
-          <button type="button" onClick={() => setEmail('')} className="absolute left-6 top-6 text-blue-600 hover:underline text-sm">Back</button>
-        )}
         {/* Continue/Submit Button */}
         <button type="submit" className="w-full bg-yellow-400 text-blue-900 py-2 rounded font-semibold hover:bg-yellow-300 transition-colors shadow mt-2" disabled={loading}>
-          {loading ? 'Signing up...' : steps.length === 1 ? 'Continue' : steps.length === 2 ? 'Continue' : 'Sign Up'}
+          {loading ? 'Signing up...' : 'Sign Up'}
         </button>
         <div className="text-center text-sm">
           Already have an account? <a href="/login" className="text-blue-600 hover:underline">Sign in</a>
@@ -252,23 +279,5 @@ const Signup = () => {
     </div>
   );
 };
-
-function isStrongPassword(pw: string) {
-  // At least 8 chars, 1 letter, 1 number
-  return pw.length >= 8 && /[A-Za-z]/.test(pw) && /\d/.test(pw);
-}
-
-function getPasswordStrength(pw: string) {
-  let score = 0;
-  if (pw.length >= 8) score++;
-  if (/[A-Z]/.test(pw)) score++;
-  if (/[a-z]/.test(pw)) score++;
-  if (/\d/.test(pw)) score++;
-  if (/[^A-Za-z0-9]/.test(pw)) score++;
-  if (score <= 1) return { label: 'Weak', color: 'bg-red-400', percent: 33, textColor: 'text-red-500' };
-  if (score === 2) return { label: 'Fair', color: 'bg-yellow-400', percent: 60, textColor: 'text-yellow-600' };
-  if (score === 3) return { label: 'Good', color: 'bg-blue-400', percent: 80, textColor: 'text-blue-600' };
-  return { label: 'Strong', color: 'bg-green-500', percent: 100, textColor: 'text-green-600' };
-}
 
 export default Signup;

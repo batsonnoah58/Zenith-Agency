@@ -43,7 +43,7 @@ export interface UserProfile {
 
 interface UserStore {
   profile: UserProfile | null;
-  setProfile: (profile: UserProfile) => void;
+  setProfile: (profile: UserProfile | null) => void;
   updateStats: (stats: Partial<UserStats>) => void;
   upgradeLevel: (level: number) => void;
   completeTask: () => void;
@@ -60,7 +60,7 @@ interface UserStore {
 export const useUserStore = create<UserStore>(
   (set, get) => ({
   profile: null,
-    setProfile: (profile: UserProfile) => set({ profile }),
+    setProfile: (profile: UserProfile | null) => set({ profile }),
     updateStats: (stats: Partial<UserStats>) => set((state) =>
     state.profile ? { profile: { ...state.profile, stats: { ...state.profile.stats, ...stats } } } : {}
   ),
