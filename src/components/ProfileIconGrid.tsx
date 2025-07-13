@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { FaWallet, FaChartLine, FaFileInvoice, FaCalendarDay, FaUsers, FaGift, FaCog } from "react-icons/fa";
 
 const features = [
@@ -14,10 +15,14 @@ export default function ProfileIconGrid() {
   return (
     <div className="grid grid-cols-3 gap-4 p-4">
       {features.map((f) => (
-        <a key={f.label} href={f.link} className="flex flex-col items-center">
-          <div className="text-3xl mb-1">{f.icon}</div>
-          <span className="text-xs">{f.label}</span>
-        </a>
+        <Link 
+          key={f.label} 
+          to={f.link} 
+          className="flex flex-col items-center p-3 rounded-lg hover:bg-blue-50 transition-colors"
+        >
+          <div className="text-3xl mb-1 text-blue-600">{f.icon}</div>
+          <span className="text-xs text-gray-700">{f.label}</span>
+        </Link>
       ))}
     </div>
   );

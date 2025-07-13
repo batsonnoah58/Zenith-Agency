@@ -164,10 +164,10 @@ function Navbar() {
         )}
       </nav>
 
-      {/* Mobile Bottom Navigation Bar - Simplified for better UX */}
+      {/* Mobile Bottom Navigation Bar - Only show main navigation, no logout */}
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow md:hidden">
         <div className="flex justify-around items-center h-16">
-          {navItems.filter(item => item.public || user).slice(0, 4).map((item) => (
+          {navItems.filter(item => item.public || user).slice(0, 5).map((item) => (
             <Link
               key={item.name}
               to={item.path}
@@ -182,16 +182,6 @@ function Navbar() {
               <span className="mt-1">{item.name}</span>
             </Link>
           ))}
-          {user && (
-            <button
-              onClick={handleLogout}
-              className="flex flex-col items-center justify-center flex-1 h-full text-xs font-medium text-gray-500 hover:text-red-600 transition-colors min-h-[44px]"
-              style={{ background: "none", border: "none" }}
-            >
-              <FaSignOutAlt size={22} />
-              <span className="mt-1">Logout</span>
-            </button>
-          )}
         </div>
       </div>
     </>

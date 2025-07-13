@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
@@ -23,8 +24,16 @@ import Settings from "./pages/Settings";
 import Leaderboard from "./pages/Leaderboard";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { Toaster } from "react-hot-toast";
+import { useAuthStore } from "./store/auth";
 
 function App() {
+  const { initializeAuth } = useAuthStore();
+
+  useEffect(() => {
+    // Initialize authentication on app startup
+    initializeAuth();
+  }, [initializeAuth]);
+
   return (
     <ErrorBoundary>
       <div className="App">

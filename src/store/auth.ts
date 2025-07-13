@@ -12,17 +12,28 @@ interface AuthState {
   token: string | null;
   loading: boolean;
   error: string | null;
+  initialized: boolean;
   login: (phone: string, password: string) => Promise<void>;
   signup: (name: string, phone: string, password: string) => Promise<void>;
   logout: () => void;
   fetchUser: () => Promise<void>;
+  initializeAuth: () => Promise<void>;
 }
 
-export const useAuthStore = create<AuthState>((set: (partial: Partial<AuthState>) => void) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   token: localStorage.getItem('token'),
   loading: false,
   error: null,
+  initialized: false,
+
+  initializeAuth: async () => {
+    const token = localStorage.getItem('token');
+    if (token && !get().initialized) {
+      await get().fetchUser();
+    }
+    set({ initialized: true });
+  },
 
   // Hardcoded demo users (now using phone numbers)
   login: async (phone: string, password: string) => {

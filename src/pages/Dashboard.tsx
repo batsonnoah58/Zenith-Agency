@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import { useUserStore } from '../store/user';
 import { LEVELS as LEVELS_CONFIG } from '../utils/levels';
 import { LEVELS as LEVELS_DATA } from '../data/levels';
@@ -270,7 +271,7 @@ const Dashboard = () => {
           ))}
         </div>
         <div className="flex items-center gap-2 text-orange-600 font-semibold mb-2"><FaFire /> Streak: {streak} days</div>
-        <a href="/leaderboard" className="text-blue-600 hover:underline text-xs flex items-center gap-1"><FaTrophy /> View Leaderboard</a>
+        <Link to="/leaderboard" className="text-blue-600 hover:underline text-xs flex items-center gap-1"><FaTrophy /> View Leaderboard</Link>
       </Card>
     </div>
   );
